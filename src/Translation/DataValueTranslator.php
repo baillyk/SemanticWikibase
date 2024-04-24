@@ -19,7 +19,7 @@ use SMWDIUri;
 use Wikibase\DataModel\Entity\EntityId;
 use Wikibase\DataModel\Entity\EntityIdValue;
 use Wikibase\DataModel\Entity\ItemId;
-use Wikibase\DataModel\Entity\PropertyId;
+use Wikibase\DataModel\Entity\NumericPropertyId;
 
 class DataValueTranslator {
 
@@ -78,7 +78,7 @@ class DataValueTranslator {
 			return WB_NS_ITEM;
 		}
 
-		if ( $idValue instanceof PropertyId ) {
+		if ( $idValue instanceof NumericPropertyId ) {
 			return WB_NS_PROPERTY;
 		}
 

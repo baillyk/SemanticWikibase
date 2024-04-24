@@ -40,7 +40,7 @@ class StatementTranslator {
 	private function snakWithSimpleDataValueToDataItem( PropertyValueSnak $snak ): SMWDataItem {
 		return $this->dataValueTranslator->translate(
 			new TypedDataValue(
-				$this->propertyTypeLookup->getDataTypeIdForProperty( $snak->getPropertyId() ),
+				$this->propertyTypeLookup->getDataTypeIdForProperty( $snak->getNumericPropertyId() ),
 				$snak->getDataValue()
 			)
 		);

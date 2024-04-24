@@ -12,7 +12,7 @@ use SMW\DIWikiPage;
 use SMW\SemanticData;
 use Title;
 use Wikibase\DataModel\Entity\ItemId;
-use Wikibase\DataModel\Entity\PropertyId;
+use Wikibase\DataModel\Entity\NumericPropertyId;
 use Wikibase\DataModel\Services\Lookup\ItemLookup;
 use Wikibase\DataModel\Services\Lookup\PropertyLookup;
 
@@ -64,7 +64,7 @@ class SemanticDataUpdate {
 
 	private function getSemanticEntityForPropertyTitle( Title $title ): SemanticEntity {
 		return $this->newPropertyTranslator( $title )->translateProperty(
-			$this->propertyLookup->getPropertyForId( new PropertyId( $title->getText() ) )
+			$this->propertyLookup->getPropertyForId( new NumericPropertyId( $title->getText() ) )
 		);
 	}
 

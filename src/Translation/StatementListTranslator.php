@@ -39,21 +39,21 @@ class StatementListTranslator {
 				$semanticEntity->addPropertyValue( DIProperty::TYPE_SUBOBJECT, $dataItem );
 
 				$semanticEntity->addPropertyValue(
-					$this->propertyIdForStatement( $statement ),
+					$this->NumericPropertyIdForStatement( $statement ),
 					$dataItem->getSemanticData()->getSubject()
 				);
 			}
 			else {
 				$semanticEntity->addPropertyValue(
-					$this->propertyIdForStatement( $statement ),
+					$this->NumericPropertyIdForStatement( $statement ),
 					$dataItem
 				);
 			}
 		}
 	}
 
-	private function propertyIdForStatement( Statement $statement ): string {
-		return UserDefinedProperties::idFromWikibaseProperty( $statement->getPropertyId() );
+	private function NumericPropertyIdForStatement( Statement $statement ): string {
+		return UserDefinedProperties::idFromWikibaseProperty( $statement->getNumericPropertyId() );
 	}
 
 }

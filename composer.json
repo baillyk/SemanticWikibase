@@ -1,5 +1,5 @@
 {
-	"name": "professional-wiki/semantic-wikibase",
+	"name": "baillyk/semantic-wikibase",
 	"type": "mediawiki-extension",
 	"description": "MediaWiki extension that makes Wikibase data available in Semantic MediaWiki",
 	"keywords": [

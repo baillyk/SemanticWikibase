@@ -13,23 +13,23 @@ class SemanticEntity {
 
 	private array $dataItemsPerProperty = [];
 
-	public function addPropertyValue( string $propertyId, SMWDataItem $dataItem ) {
-		$this->dataItemsPerProperty[$propertyId][] = $dataItem;
+	public function addPropertyValue( string $NumericPropertyId, SMWDataItem $dataItem ) {
+		$this->dataItemsPerProperty[$NumericPropertyId][] = $dataItem;
 	}
 
 	/**
-	 * @param string $propertyId
+	 * @param string $NumericPropertyId
 	 * @return SMWDataItem[]
 	 */
-	public function getDataItemsForProperty( string $propertyId ): array {
-		return $this->dataItemsPerProperty[$propertyId] ?? [];
+	public function getDataItemsForProperty( string $NumericPropertyId ): array {
+		return $this->dataItemsPerProperty[$NumericPropertyId] ?? [];
 	}
 
 	public function toSemanticData( DIWikiPage $subject ): SemanticData {
 		$semanticData = new SemanticData( $subject );
 
-		foreach ( $this->dataItemsPerProperty as $propertyId => $dataItems ) {
-			$property = new DIProperty( $propertyId );
+		foreach ( $this->dataItemsPerProperty as $NumericPropertyId => $dataItems ) {
+			$property = new DIProperty( $NumericPropertyId );
 
 			foreach ( $dataItems as $dataItem ) {
 				$semanticData->addPropertyObjectValue(
@@ -52,9 +52,9 @@ class SemanticEntity {
 	}
 
 	public function add( self $entity ): void {
-		foreach ( $entity->dataItemsPerProperty as $propertyId => $dataItems ) {
+		foreach ( $entity->dataItemsPerProperty as $NumericPropertyId => $dataItems ) {
 			foreach ( $dataItems as $dataItem ) {
-				$this->addPropertyValue( $propertyId, $dataItem );
+				$this->addPropertyValue( $NumericPropertyId, $dataItem );
 			}
 		}
 	}
