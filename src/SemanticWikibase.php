@@ -62,15 +62,17 @@ class SemanticWikibase {
 	}
 
 	public function registerProperties( PropertyRegistry $propertyRegistry ) {
+		wfDebug("SWB: register properties ".json_encode($this->getAllProperties()));
 		foreach ( $this->getAllProperties() as $property ) {
 			$propertyRegistry->registerProperty(
 				$property->getId(),
 				$property->getType(),
 				$property->getLabel(),
-				true,
-				false
+				true, #is_visible
+				true, #is_annotable
+				false #is_declarative
 			);
-
+			wfDebug("SWB: register property ".$property->getId());
 			foreach ( $property->getAliases() as $alias ) {
 				$propertyRegistry->registerPropertyAlias( $property->getId(), $alias );
 			}

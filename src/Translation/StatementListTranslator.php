@@ -53,7 +53,7 @@ class StatementListTranslator {
 	}
 
 	private function NumericPropertyIdForStatement( Statement $statement ): string {
-		return UserDefinedProperties::idFromWikibaseProperty( $statement->getNumericPropertyId() );
+		return UserDefinedProperties::idFromWikibaseProperty( $statement->getPropertyId() );
 	}
 
 }

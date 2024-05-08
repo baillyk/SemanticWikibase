@@ -18,10 +18,10 @@ class PropertyTranslator {
 		$this->statementListTranslator = $statementListTranslator;
 	}
 
-	public function translateProperty( Property $property ): SemanticEntity {
+	public function translateProperty( ?Property $property ): SemanticEntity {
 		$semanticEntity = new SemanticEntity();
 
-		if ( $property->getId() === null ) {
+		if ( $property === null || $property->getId() === null ) {
 			return $semanticEntity;
 		}
 

@@ -63,6 +63,11 @@ class SemanticDataUpdate {
 	}
 
 	private function getSemanticEntityForPropertyTitle( Title $title ): SemanticEntity {
+		wfDebug(__METHOD__. "swb: getSemanticEntity:".json_encode($title));
+		wfDebug(__METHOD__. "swb: getSemanticEntity:".json_encode($title->getText()));
+		wfDebug(__METHOD__. "swb: getSemanticEntity:".json_encode(new NumericPropertyId( $title->getText() )));
+		wfDebug(__METHOD__. "swb: getSemanticEntity:".json_encode($this->propertyLookup->getPropertyForId( new NumericPropertyId( $title->getText() ) )));
+		
 		return $this->newPropertyTranslator( $title )->translateProperty(
 			$this->propertyLookup->getPropertyForId( new NumericPropertyId( $title->getText() ) )
 		);
