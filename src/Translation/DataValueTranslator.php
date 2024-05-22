@@ -20,12 +20,14 @@ use Wikibase\DataModel\Entity\EntityId;
 use Wikibase\DataModel\Entity\EntityIdValue;
 use Wikibase\DataModel\Entity\ItemId;
 use Wikibase\DataModel\Entity\NumericPropertyId;
+use EDTF\Services\TimeValueBuilder;
+use EDTF\EdtfValue;
 
 class DataValueTranslator {
 
 	public function translate( TypedDataValue $typedValue ): SMWDataItem {
 		$value = $typedValue->getValue();
-
+		wfDebug("swb: translate". get_class( $value ));
 		if ( $value instanceof StringValue ) {
 			return $this->translateStringValue( $typedValue );
 		}
@@ -47,7 +49,12 @@ class DataValueTranslator {
 		if ( $value instanceof TimeValue ) {
 			return $this->translateTimeValue( $value );
 		}
-
+		if ( $value instanceof EdtfValue ) {
+			wfDebug("swb: translate edtf");
+			$tvb = new TimeValueBuilder( EdtfFactory::newParser() );
+			return $tvb->singleValueEdtfToTimeValue($value);
+		}
+        
 		throw new \RuntimeException( 'Support for DataValue type "' . get_class( $value ) . '" not implemented' );
 	}
 
@@ -87,6 +94,20 @@ class DataValueTranslator {
 
 	public function translateDecimalValue( DecimalValue $value ): SMWDataItem {
 		return new \SMWDINumber( $value->getValueFloat() );
+	}
+
+	private function translateEDTF(WikibaseEdtf $value):\SMWDITime {
+		$components = ( new TimeValueParser() )->parse( $value->getTime() );
+
+		return new WikibaseEdtf(
+			$this->wbToSmwCalendarModel( $value->getCalendarModel() ),
+			$components->get( 'datecomponents' )[0],
+			$components->get( 'datecomponents' )[2],
+			$components->get( 'datecomponents' )[4],
+			$components->get( 'hours' ),
+			$components->get( 'minutes' ),
+			$components->get( 'seconds' ),
+		);
 	}
 
 	private function translateTimeValue( TimeValue $value ): \SMWDITime {

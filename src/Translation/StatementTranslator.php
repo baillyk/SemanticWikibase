@@ -25,8 +25,21 @@ class StatementTranslator {
 
 	public function statementToDataItem( Statement $statement, DIWikiPage $subject ): ?SMWDataItem {
 		$mainSnak = $statement->getMainSnak();
+		return $this->snakToDataItem($mainSnak, $statement, $subject);
+	}
 
-		if ( !( $mainSnak instanceof PropertyValueSnak ) ) {
+	public function statementToQualifiersDataItemList( Statement $statement, DIWikiPage $subject ): array {
+		$qualifiers = $statement->getQualifiers();
+		$result = [];
+		foreach( $qualifiers as $actQualifier) {
+            $result[] = $this->snakToDataItem($actQualifier, $statement, $subject);
+		} 
+
+		return $result;
+	}
+
+	public function snakToDataItem( PropertyValueSnak $snak, Statement $statement, DIWikiPage $subject ): ?SMWDataItem {
+		if ( !( $snak instanceof PropertyValueSnak ) ) {
 			return null;
 		}
 
@@ -34,7 +47,7 @@ class StatementTranslator {
 			return $this->containerValueTranslator->statementToDataItem( $statement, $subject );
 		}
 
-		return $this->snakWithSimpleDataValueToDataItem( $mainSnak );
+		return $this->snakWithSimpleDataValueToDataItem( $snak );
 	}
 
 	private function snakWithSimpleDataValueToDataItem( PropertyValueSnak $snak ): SMWDataItem {

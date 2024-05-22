@@ -9,6 +9,8 @@ use SMW\DIProperty;
 use SMW\DIWikiPage;
 use Wikibase\DataModel\Statement\Statement;
 use Wikibase\DataModel\Statement\StatementList;
+use MWException;
+use SMW\PropertyRegistry;
 
 class StatementListTranslator {
 
@@ -25,6 +27,7 @@ class StatementListTranslator {
 
 		foreach ( $statements->getBestStatements()->getByRank( [ Statement::RANK_PREFERRED, Statement::RANK_NORMAL ] ) as $statement ) {
 			$this->addStatement( $semanticEntity, $statement );
+
 		}
 
 		return $semanticEntity;
@@ -48,6 +51,22 @@ class StatementListTranslator {
 					$this->NumericPropertyIdForStatement( $statement ),
 					$dataItem
 				);
+			}
+
+			// now process qualifiers
+			$qualifiers = $statement->getQualifiers();
+		    $i = 1;
+			foreach( $qualifiers as $actQualifier) {
+                $actQualifierDataItem = $this->statementTranslator->snakToDataItem($actQualifier, $statement, $this->subject);
+		
+				// TODO: do we need to handle type SMWDIContainer here?
+				//throw new MWException(json_encode($actQualifier->getDataValue()));
+				$newPropId = $statement->getPropertyId()->getSerialization()."hasQualifier".$actQualifier->getPropertyId();
+				$semanticEntity->addPropertyValue(
+					$newPropId,
+					$actQualifierDataItem
+				);
+				$i++;
 			}
 		}
 	}

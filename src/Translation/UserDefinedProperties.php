@@ -44,6 +44,8 @@ class UserDefinedProperties {
 						$this->labelLanguageCode
 					)
 				);
+			}else{
+				wfDebug("swb: cannot translate ".$propertyInfo['type']);
 			}
 		}
 
