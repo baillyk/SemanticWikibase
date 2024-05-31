@@ -22,12 +22,16 @@ use Wikibase\DataModel\Entity\ItemId;
 use Wikibase\DataModel\Entity\NumericPropertyId;
 use EDTF\Services\TimeValueBuilder;
 use EDTF\EdtfValue;
+use MediaWiki\Logger\LoggerFactory;
 
 class DataValueTranslator {
 
 	public function translate( TypedDataValue $typedValue ): SMWDataItem {
+		
+		
 		$value = $typedValue->getValue();
-		wfDebug("swb: translate". get_class( $value ));
+		
+		
 		if ( $value instanceof StringValue ) {
 			return $this->translateStringValue( $typedValue );
 		}
@@ -46,11 +50,13 @@ class DataValueTranslator {
 		if ( $value instanceof GlobeCoordinateValue ) {
 			return $this->translateGlobeCoordinateValue( $value );
 		}
+		
 		if ( $value instanceof TimeValue ) {
+			
 			return $this->translateTimeValue( $value );
 		}
 		if ( $value instanceof EdtfValue ) {
-			wfDebug("swb: translate edtf");
+			
 			$tvb = new TimeValueBuilder( EdtfFactory::newParser() );
 			return $tvb->singleValueEdtfToTimeValue($value);
 		}
