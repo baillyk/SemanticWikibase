@@ -73,6 +73,7 @@ class SemanticWikibase {
 				false #is_declarative
 			);
 			wfDebug("SWB: register property ".$property->getId());
+			wfDebug("SWB: register property ".$property->getType());
 			foreach ( $property->getAliases() as $alias ) {
 				$propertyRegistry->registerPropertyAlias( $property->getId(), $alias );
 			}

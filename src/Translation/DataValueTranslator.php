@@ -20,9 +20,13 @@ use Wikibase\DataModel\Entity\EntityId;
 use Wikibase\DataModel\Entity\EntityIdValue;
 use Wikibase\DataModel\Entity\ItemId;
 use Wikibase\DataModel\Entity\NumericPropertyId;
-use EDTF\Services\TimeValueBuilder;
-use EDTF\EdtfValue;
+use Wikibase\EDTF\Services\TimeValueBuilder;
+use Wikibase\EDTF\EdtfValue;
 use MediaWiki\Logger\LoggerFactory;
+use EDTF\EdtfFactory;
+use EDTF\Model\ExtDate;
+use EDTF\Model\ExtDateTime;
+use EDTF\Model\Interval;
 
 class DataValueTranslator {
 
@@ -30,9 +34,16 @@ class DataValueTranslator {
 		
 		
 		$value = $typedValue->getValue();
-		
+		$propertyType = $typedValue->getPropertyType();
+		if( $value != null) {
+			wfDebug( 'swb: translate: '.get_class( $value ).' ptype: '.$propertyType );
+		}
 		
 		if ( $value instanceof StringValue ) {
+			wfDebug( 'swb: translate: '. $typedValue->getValue()->getValue()  );
+			if( $propertyType == 'edtf') {
+				return $this->translateEDTF("".$value->getValue());
+			}
 			return $this->translateStringValue( $typedValue );
 		}
 		if ( $value instanceof BooleanValue ) {
@@ -52,14 +63,10 @@ class DataValueTranslator {
 		}
 		
 		if ( $value instanceof TimeValue ) {
-			
+			wfDebug( 'swb: translate time: '. $$value.toString()   );
 			return $this->translateTimeValue( $value );
 		}
-		if ( $value instanceof EdtfValue ) {
-			
-			$tvb = new TimeValueBuilder( EdtfFactory::newParser() );
-			return $tvb->singleValueEdtfToTimeValue($value);
-		}
+		
         
 		throw new \RuntimeException( 'Support for DataValue type "' . get_class( $value ) . '" not implemented' );
 	}
@@ -102,18 +109,51 @@ class DataValueTranslator {
 		return new \SMWDINumber( $value->getValueFloat() );
 	}
 
-	private function translateEDTF(WikibaseEdtf $value):\SMWDITime {
-		$components = ( new TimeValueParser() )->parse( $value->getTime() );
+	private function translateEDTF( String $value ): \SMWDITime {
+		wfDebug( 'swb: translate edtf' );
+		$tvb = new TimeValueBuilder( EdtfFactory::newParser() );
+		$tvArr = $tvb->edtfToTimeValues( $value );
+		$parser = \EDTF\EdtfFactory::newParser();
+		$parsingResult = $parser->parse($value);
+		wfDebug($parsingResult->isValid()); // true
+		$edtfValue = $parsingResult->getEdtfValue(); // \EDTF\EdtfValue
+		$humanizer = \EDTF\EdtfFactory::newHumanizerForLanguage( 'en' );
+		wfDebug($humanizer->humanize($edtfValue)); // string
+		wfDebug(get_class($edtfValue)); // string
+		$result = null;
 
-		return new WikibaseEdtf(
-			$this->wbToSmwCalendarModel( $value->getCalendarModel() ),
-			$components->get( 'datecomponents' )[0],
-			$components->get( 'datecomponents' )[2],
-			$components->get( 'datecomponents' )[4],
-			$components->get( 'hours' ),
-			$components->get( 'minutes' ),
-			$components->get( 'seconds' ),
-		);
+		if ( $edtfValue instanceof Interval ) {
+			if($edtfValue->hasStartDate()){
+				$edtfValue = $edtfValue->getStartDate();
+			} else if ($edtfValue->hasEndDate()){
+				$edtfValue = $edtfValue->getEndDate();
+			} else {
+				wfDebug('ERROR: unable to translate empty edtf interval to smw date');
+				return null;
+			}
+		}
+
+		if( $edtfValue instanceof ExtDate ) {
+			$result = new \SMWDITime(
+				SMWDITime::CM_GREGORIAN,
+				$edtfValue->getYear(),
+				$edtfValue->getMonth(),
+				$edtfValue->getDay()
+			);
+
+		} else if ( $edtfValue instanceof ExtDateTime ) {
+			$result = new \SMWDITime(
+				SMWDITime::CM_GREGORIAN,
+				$edtfValue->getYear(),
+				$edtfValue->getMonth(),
+				$edtfValue->getDay(),
+				$edtfValue->getHour(),
+				$edtfValue->getMinute(),
+				$edtfValue->getSecond()
+			);
+		} 
+		wfDebug($result->getMwTimestamp());
+		return $result;
 	}
 
 	private function translateTimeValue( TimeValue $value ): \SMWDITime {

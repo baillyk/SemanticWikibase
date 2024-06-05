@@ -8,13 +8,19 @@ use SMW\DIProperty;
 use SMW\DIWikiPage;
 use SMW\SemanticData;
 use SMWDataItem;
+use SMW\Subobject;
 
 class SemanticEntity {
 
 	private array $dataItemsPerProperty = [];
+	private array $subObjectsPerProperty=[];
 
 	public function addPropertyValue( string $NumericPropertyId, SMWDataItem $dataItem ) {
 		$this->dataItemsPerProperty[$NumericPropertyId][] = $dataItem;
+	}
+
+	public function addSubobject( string $NumericPropertyId, SubObject $subobject ){
+		$this->subObjectsPerProperty[$NumericPropertyId][] = $subobject;
 	}
 
 	/**
@@ -36,6 +42,14 @@ class SemanticEntity {
 					$property,
 					$dataItem
 				);
+			}
+		}
+
+		foreach ( $this->subObjectsPerProperty as $NumericPropertyId => $subobjects ) {
+			$property = new DIProperty( $NumericPropertyId );
+
+			foreach ( $subobjects as $subobject ) {
+				$semanticData->addSubobject($subobject);
 			}
 		}
 
