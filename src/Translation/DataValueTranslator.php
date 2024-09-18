@@ -152,7 +152,7 @@ class DataValueTranslator {
 				$edtfValue->getSecond()
 			);
 		} 
-		wfDebug($result->getMwTimestamp());
+	
 		return $result;
 	}
 
