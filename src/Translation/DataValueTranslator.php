@@ -151,7 +151,13 @@ class DataValueTranslator {
 				$edtfValue->getMinute(),
 				$edtfValue->getSecond()
 			);
-		} 
+		} else {
+		$result = new \SMWDITime(
+				SMWDITime::CM_GREGORIAN,
+				0
+			);
+				
+		}
 	
 		return $result;
 	}
