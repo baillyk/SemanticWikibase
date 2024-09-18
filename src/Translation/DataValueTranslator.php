@@ -154,7 +154,7 @@ class DataValueTranslator {
 		} else {
 		$result = new \SMWDITime(
 				SMWDITime::CM_GREGORIAN,
-				0
+				1970
 			);
 				
 		}
