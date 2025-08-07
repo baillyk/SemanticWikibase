@@ -43,7 +43,9 @@ class DataValueTranslator {
 			wfDebug( 'swb: translate: '. $typedValue->getValue()->getValue()  );
 			if( $propertyType == 'edtf') {
 				return $this->translateEDTF("".$value->getValue());
-			}
+			}else if ($propertyType == 'localMedia') {
+                return $this->translateLocalMedia("".$value->getValue());
+            }
 			return $this->translateStringValue( $typedValue );
 		}
 		if ( $value instanceof BooleanValue ) {
@@ -86,6 +88,12 @@ class DataValueTranslator {
 		);
 	}
 
+	private function translateLocalMedia( String $imagePage): SMWDataItem {
+			return new DIWikiPage(
+					$imagePage,
+					NS_FILE
+			);
+	}
 	private function translateEntityIdValue( EntityIdValue $idValue ): SMWDataItem {
 		return new DIWikiPage(
 			$idValue->getEntityId()->getSerialization(),
