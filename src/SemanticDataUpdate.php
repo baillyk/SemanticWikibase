@@ -10,7 +10,7 @@ use MediaWiki\Extension\SemanticWikibase\Translation\PropertyTranslator;
 use MediaWiki\Extension\SemanticWikibase\Translation\TranslatorFactory;
 use SMW\DIWikiPage;
 use SMW\SemanticData;
-use Title;
+use MediaWiki\Title\Title;
 use Wikibase\DataModel\Entity\ItemId;
 use Wikibase\DataModel\Entity\NumericPropertyId;
 use Wikibase\DataModel\Services\Lookup\ItemLookup;
